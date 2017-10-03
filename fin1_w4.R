@@ -1,5 +1,5 @@
 #Quiz week 4
-n<-10
+n<-15
 T<-0.25
 S<-100
 r<-0.02
@@ -81,7 +81,7 @@ for(j in N:0)#j - periods
   }
 }
 
-n<-10
+n<-15
 R<-exp(r*T/n)
 u<-exp(sigma*sqrt(T/n))
 d<-1/u
