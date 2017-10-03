@@ -5,7 +5,7 @@ S<-100
 r<-0.02
 sigma<-0.3
 c<-0.01
-K<-110
+K<-100
 
 #Excel
 # n<-10
@@ -39,6 +39,7 @@ result<-c(0)
 sum<-0
 remove(sec_price)
 remove(fut_price)
+remove(chooser_price)
 remove(call_option_euro_price)
 remove(call_option_euro_fut_price)
 remove(put_option_euro_price)
@@ -48,6 +49,7 @@ remove(diff_optons)
 
 sec_price<-matrix(nrow=16,ncol=16)
 fut_price<-matrix(nrow=16,ncol=16)
+chooser_price<-matrix(nrow=16,ncol=16)
 call_option_euro_price<-matrix(nrow=16,ncol=16)
 call_option_euro_fut_price<-matrix(nrow=16,ncol=16)
 put_option_euro_price<-matrix(nrow=16,ncol=16)
@@ -107,6 +109,8 @@ for(j in n:0)#j - periods
   {
     if(j==n)
     {
+      chooser_price[j-i+1,j+1]<-max(sec_price[j-i+1,j+1]-K,K-sec_price[j-i+1,j+1])
+      #
       call_option_euro_price[j-i+1,j+1]<-max(sec_price[j-i+1,j+1]-K,0)
       call_option_euro_fut_price[j-i+1,j+1]<-max(fut_price[j-i+1,j+1]-K,0)
       #
@@ -115,6 +119,8 @@ for(j in n:0)#j - periods
     }
     else
     {
+      chooser_price[j-i+1,j+1]<-(q*chooser_price[j-i+1,j+2] + (1-q)*chooser_price[j-i+2,j+2])/R
+      #
       call_option_euro_price[j-i+1,j+1]<-(q*call_option_euro_price[j-i+1,j+2] + (1-q)*call_option_euro_price[j-i+2,j+2])/R
       #
       call_option_euro_fut_price[j-i+1,j+1]<-(q*call_option_euro_fut_price[j-i+1,j+2] + (1-q)*call_option_euro_fut_price[j-i+2,j+2])/R
@@ -127,11 +133,12 @@ for(j in n:0)#j - periods
     }
   }
 
+  #american option: estimation if early will not loose!
   for(i in j:0)
   {
-    if((K-sec_price[j-i+1,j+1]) > put_option_price[j-i+1,j+1])
+    if((K-sec_price[j-i+1,j+1]) > call_option_euro_fut_price[j-i+1,j+1])
     {
-      diff[j-i+1,j+1]<-(K-sec_price[j-i+1,j+1]) - put_option_price[j-i+1,j+1]
+      diff[j-i+1,j+1]<-(K-sec_price[j-i+1,j+1]) - call_option_euro_fut_price[j-i+1,j+1]
     }
   }
   
@@ -139,11 +146,11 @@ for(j in n:0)#j - periods
   
 #  if(max_exec>max)
   {
-    message(paste("exec: j=",j))
-    message(paste("exec: max_exec=",max_exec," vs max=",max))
+    # message(paste("exec: j=",j))
+    # message(paste("exec: max_exec=",max_exec," vs max=",max))
   }
   
-  sum<-sum+nchoosek(n,j)*q^j*(1-q)^(n-j)*max
+#  sum<-sum+nchoosek(n,j)*q^j*(1-q)^(n-j)*max
 }
 
 result<-sum/R^n
