@@ -28,6 +28,7 @@ K<-80
 remove(rate_lattice)
 remove(zcb_price)
 remove(el_price)
+remove(all_zcb_prices)
 remove(call_option_euro_zcb_price)
 remove(call_option_amer_zcb_price)
 remove(forward_swap_price)
@@ -45,6 +46,7 @@ remove(diff_optons)
 rate_lattice<-matrix(nrow=11,ncol=11)
 zcb_price<-matrix(nrow=11,ncol=11)
 el_price<-matrix(nrow=11,ncol=11)
+all_zcb_prices<-vector(length=11)
 call_option_euro_zcb_price<-matrix(nrow=11,ncol=11)
 call_option_amer_zcb_price<-matrix(nrow=11,ncol=11)
 forward_swap_price<-matrix(nrow=11,ncol=11)
@@ -92,6 +94,15 @@ for(j in 0:n)#j - periods
       if(i == j)#top
         el_price[1,j+1]<-(q*el_price[1,j])/(1+rate_lattice[1,j])
     }
+  }
+}
+
+
+for(j in 0:n)#j - periods.
+{
+  for(i in 0:j)
+  {
+    all_zcb_prices[j+1]<-all_zcb_prices[j+1] + el_price[i+1,j+1] 
   }
 }
 
