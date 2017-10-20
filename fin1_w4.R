@@ -155,8 +155,8 @@ for(j in n:0)#j - periods
 
 result<-sum/R^n
 
-#chooser
-
+#chooser n=10 on put/call with N=15: the same lattice as as for call/put
+#n<-10
 R<-exp(r*T/n)
 u<-exp(sigma*sqrt(T/n))
 d<-1/u
