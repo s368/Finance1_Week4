@@ -19,6 +19,8 @@ remove(rate_lattice)
 remove(zcb_price)
 remove(call_option_euro_zcb_price)
 remove(call_option_amer_zcb_price)
+remove(forward_zcb_price)
+remove(fut_zcb_price)
 
 remove(sec_price)
 remove(fut_price)
@@ -33,6 +35,8 @@ rate_lattice<-matrix(nrow=11,ncol=11)
 zcb_price<-matrix(nrow=11,ncol=11)
 call_option_euro_zcb_price<-matrix(nrow=11,ncol=11)
 call_option_amer_zcb_price<-matrix(nrow=11,ncol=11)
+forward_zcb_price<-matrix(nrow=11,ncol=11)
+fut_zcb_price<-matrix(nrow=11,ncol=11)
 
 sec_price<-matrix(nrow=16,ncol=16)
 fut_price<-matrix(nrow=16,ncol=16)
@@ -70,6 +74,24 @@ for(j in n:0)#j - periods.
   }
 }
 
+n<-4
+#futures on zcb (zero coupon bonds)
+for(j in n:0)#j - periods.
+{
+  for(i in j:0)#i - set ate the same period.
+  {
+    if(j==n)
+    {
+      fut_zcb_price[j-i+1,j+1]<-zcb_price[j-i+1,j+1]
+    }
+    else
+    {
+      fut_zcb_price[j-i+1,j+1]<-(q*fut_zcb_price[j-i+1,j+2] + (1-q)*fut_zcb_price[j-i+2,j+2])
+      #
+    }
+  }
+}
+
 n<-6
 #call option euro on zcb(zero coupon bonds)
 for(j in n:0)#j - periods.
@@ -99,6 +121,24 @@ for(j in n:0)#j - periods.
     if((zcb_price[j-i+1,j+1]-K) > call_option_amer_zcb_price[j-i+1,j+1])
     {
       diff[j-i+1,j+1]<-(zcb_price[j-i+1,j+1]-K) - call_option_amer_zcb_price[j-i+1,j+1]
+    }
+  }
+}
+
+n<-4
+#forward on zcb(zero coupon bonds)
+for(j in n:0)#j - periods.
+{
+  #zcb (zero coupon bonds)
+  for(i in j:0)#i - set ate the same period.
+  {
+    if(j==n)
+    {
+      forward_zcb_price[j-i+1,j+1]<-zcb_price[j-i+1,j+1]
+    }
+    else
+    {
+      forward_zcb_price[j-i+1,j+1]<-(q*forward_zcb_price[j-i+1,j+2] + (1-q)*forward_zcb_price[j-i+2,j+2])
     }
   }
 }
