@@ -124,3 +124,8 @@ for(j in n:0)#j - periods.
   }
 }
 
+#book page 399: Ho-Lee model picture 14.11
+#element prices in k=1
+a<-1/2*1/1.0767 
+#short rate is a root of equation Z(2,0)=forward_equation - k=2 (3 nodes)
+root<-uniroot(function(x) a/(1+x)+a/(1+x+0.0002)-1/1.0827^2, lower = 0, upper = 100)
