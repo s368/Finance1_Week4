@@ -130,12 +130,22 @@ a<-1/2*1/1.0767
 #short rate is a root of equation Z(2,0)=forward_equation - k=2 (3 nodes)
 root<-uniroot(function(x) a/(1+x)+a/(1+x+0.0002)-1/1.0827^2, lower = 0, upper = 100)
 
-n<-3
+n<-2
 S<-1
+q<-0.5
+b<-0.0002
 spot_rates<-c(7.67,8.27,8.81)
 #elementary prices with Ho-Lee model i.e. rates are variable.
 for(j in 0:n)#j - periods.
 {
+  f<-function(x)
+  {
+    (-1)*S/(1+spot_rates[j]/100.)^j
+  }
+  bf<-body(f)
+  
+  message("M0")
+  
   for(i in j:0)#i - set at the same period.
   {
     if(j==0)
@@ -148,35 +158,55 @@ for(j in 0:n)#j - periods.
 #      short_rates[j-i+1,j+1]<-el_price[]
       #3 variants: top[i=0]-center[0<i<j]-bottom[i=j]
       if(0<i && i<j)
+      {
         el_price[j-i+1,j+1]<-q*el_price[j-i,j]/(1+rate_lattice[j-i,j]) + (1-q)*el_price[j-i+1,j]/(1+rate_lattice[j-i+1,j])
+        subst<-substitute(q*el_price[j-i,j]/(1+x+b*(j-i)) + (1-q)*el_price[j-i+1,j]/(1+x+b*(j-i-1)), list(i=i))
+        body(f)[[2]]<-substitute(a+b, list(a=subst,b=body(f)[[2]],i=i,j=j))
+      }
       
       if(i == 0)#bottom
+      {
         el_price[j+1,j+1]<-(q*el_price[j,j])/(1+rate_lattice[j,j])
+        subst<-quote((q*el_price[j,j])/(1+x))
+        body(f)[[2]]<-substitute(a+b, list(a=subst,b=body(f)[[2]],i=i,j=j))
+        #bf[[2]]<-substitute(expression(a+b), list(a=1,b=bf[[2]]))
+        message("M1")
+      }
       
       if(i == j)#top
+      {
         el_price[1,j+1]<-(q*el_price[1,j])/(1+rate_lattice[1,j])
+        subst<-quote((q*el_price[1,j])/(1+x+b*(j-1)))
+        body(f)[[2]]<-substitute(a+b, list(a=subst,b=body(f)[[2]],i=i,j=j))
+        #bf[[2]]<-substitute(expression(a+b), list(a=1,b=bf[[2]]))
+        message("M2")
+      }
     }
   }#i
+  message(paste("j=",j))
+  if(j != 0)
+    root<-uniroot(f,lower = 0, upper = 1, tol = 1e-10)
+  
   #find zcb for j => find short rate (by solving equation)
-  # for(i in 0:j)
-  # {
-  #   zcb_price[j+1]<-zcb_price[j+1] + el_price[i+1,j+1] 
-  # }
+  for(i in 0:j)
+  {
+    zcb_price[j+1]<-zcb_price[j+1] + el_price[i+1,j+1]
+  }
   
 }#j
 
-f<-function(x)
-{
-  r+ ( x+10 + x^5)
-}
-
-bf<-body(f)
-
-for(i in 1:2)
-{
-
-  sol<-uniroot(fun, lower = -100, upper = 100)
-  message(paste(sol))
-}
-
-substitute(expression(a + b), list(a = bf[[2]]))
+# f<-function(x)
+# {
+#   r+ ( x+10 + x^5)
+# }
+# 
+# bf<-body(f)
+# 
+# for(i in 1:2)
+# {
+# 
+#   sol<-uniroot(fun, lower = -100, upper = 100)
+#   message(paste(sol))
+# }
+# 
+# substitute(expression(a + b), list(a = bf[[2]]))
