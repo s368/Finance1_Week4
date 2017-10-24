@@ -28,6 +28,7 @@ K<-80
 remove(rate_lattice)
 remove(zcb_price)
 remove(el_price)
+remove(short_rates)
 remove(all_zcb_prices)
 remove(call_option_euro_zcb_price)
 remove(call_option_amer_zcb_price)
@@ -45,7 +46,8 @@ remove(diff_optons)
 
 rate_lattice<-matrix(nrow=11,ncol=11)
 zcb_price<-matrix(nrow=11,ncol=11)
-el_price<-matrix(nrow=11,ncol=11)
+el_price<-matrix(nrow=15,ncol=15)
+short_rates<-matrix(nrow=15,ncol=15)
 all_zcb_prices<-vector(length=11)
 call_option_euro_zcb_price<-matrix(nrow=11,ncol=11)
 call_option_amer_zcb_price<-matrix(nrow=11,ncol=11)
@@ -135,7 +137,17 @@ S<-1
 q<-0.5
 b<-0.0002
 spot_rates<-c(7.67,8.27,8.81,9.31,9.75,10.16,10.52,10.85,11.15,11.42,11.67)
-a<-c(0,0,0,0,0,0,0,0,0,0,0,0)
+a<-vector(length = 15)
+
+#Quiz: fin 1 - week 6.
+b<-0.05
+spot_rates<-c(7.67,8.27,8.81,9.31,9.75,10.16,10.52,10.85,11.15,11.42,11.67)
+
+#Fin 1 week6: excel file.
+n<-14
+spot_rates<-c(7.3,	7.62,	8.1,	8.45,	9.2,	9.64,	10.12,	10.45,	10.75,	11.22,	11.55,	11.92,	12.2,	12.32)
+b<-0.01
+
 #elementary prices with Ho-Lee model i.e. rates are variable.
 for(j in 0:n)#j - periods.
 {
@@ -161,14 +173,16 @@ for(j in 0:n)#j - periods.
       if(0<i && i<j)
       {
 #        el_price[j-i+1,j+1]<-q*el_price[j-i,j]/(1+a[j]+b*(j-i)) + (1-q)*el_price[j-i+1,j]/(1+a[j]+b*(j-i-1))
-        subst<-substitute(q*el_price[j-i,j]/(1+x+b*(j-i)) + (1-q)*el_price[j-i+1,j]/(1+x+b*(j-i-1)), list(i=i))
+#        subst<-substitute(q*el_price[j-i,j]/(1+x+b*(j-i)) + (1-q)*el_price[j-i+1,j]/(1+x+b*(j-i-1)), list(i=i))#Ho-Lee
+        subst<-substitute(q*el_price[j-i,j]/(1+x*exp(b*(j-i))) + (1-q)*el_price[j-i+1,j]/(1+x*exp(b*(j-i-1))), list(i=i))#BDT
         body(f)[[2]]<-substitute(a+b, list(a=subst,b=body(f)[[2]],i=i,j=j))
       }
       
       if(i == 0)#bottom
       {
 #        el_price[j+1,j+1]<-(q*el_price[j,j])/(1+a[j])
-        subst<-quote((q*el_price[j,j])/(1+x))
+#        subst<-quote((q*el_price[j,j])/(1+x))#Ho-Lee
+        subst<-quote((q*el_price[j,j])/(1+x))#BDT - the same as Ho-Lee!
         body(f)[[2]]<-substitute(a+b, list(a=subst,b=body(f)[[2]],i=i,j=j))
         #bf[[2]]<-substitute(expression(a+b), list(a=1,b=bf[[2]]))
         message("M1")
@@ -177,7 +191,8 @@ for(j in 0:n)#j - periods.
       if(i == j)#top
       {
 #        el_price[1,j+1]<-(q*el_price[1,j])/(1+a[j]+b*(j-1))
-        subst<-quote((q*el_price[1,j])/(1+x+b*(j-1)))
+#        subst<-quote((q*el_price[1,j])/(1+x+b*(j-1)))#Ho-Lee
+        subst<-quote((q*el_price[1,j])/(1+x*exp(b*(j-1))))#BDT
         body(f)[[2]]<-substitute(a+b, list(a=subst,b=body(f)[[2]],i=i,j=j))
         #bf[[2]]<-substitute(expression(a+b), list(a=1,b=bf[[2]]))
         message("M2")
@@ -191,6 +206,14 @@ for(j in 0:n)#j - periods.
     a[j]<-root$root
   }
 
+  for(i in 1:j)
+  {
+    if(j != 0)
+    {
+      short_rates[j-i+1,j]<-a[j]*exp(b*(j-i))#BDT
+    }
+  }
+  
   for(i in j:0)#i - set at the same period.
   {
     if(j==0)
@@ -204,17 +227,19 @@ for(j in 0:n)#j - periods.
       #3 variants: top[i=0]-center[0<i<j]-bottom[i=j]
       if(0<i && i<j)
       {
-        el_price[j-i+1,j+1]<-q*el_price[j-i,j]/(1+a[j]+b*(j-i)) + (1-q)*el_price[j-i+1,j]/(1+a[j]+b*(j-i-1))
+#        el_price[j-i+1,j+1]<-q*el_price[j-i,j]/(1+a[j]+b*(j-i)) + (1-q)*el_price[j-i+1,j]/(1+a[j]+b*(j-i-1))#Ho-Lee
+        el_price[j-i+1,j+1]<-q*el_price[j-i,j]/(1+a[j]*exp(b*(j-i))) + (1-q)*el_price[j-i+1,j]/(1+a[j]*exp(b*(j-i-1)))#BDT
       }
       
       if(i == 0)#bottom
       {
-        el_price[j+1,j+1]<-(q*el_price[j,j])/(1+a[j])
+        el_price[j+1,j+1]<-(q*el_price[j,j])/(1+a[j])#Ho-Lee and BDT (the same!).
       }
       
       if(i == j)#top
       {
-        el_price[1,j+1]<-(q*el_price[1,j])/(1+a[j]+b*(j-1))
+#        el_price[1,j+1]<-(q*el_price[1,j])/(1+a[j]+b*(j-1))#Ho-Lee
+        el_price[1,j+1]<-(q*el_price[1,j])/(1+a[j]*exp(b*(j-1)))#BDT
       }
     }
   }#i
