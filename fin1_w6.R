@@ -149,13 +149,12 @@ spot_rates<-c(7.67,8.27,8.81,9.31,9.75,10.16,10.52,10.85,11.15,11.42,11.67)
 n<-14
 spot_rates<-c(7.3,	7.62,	8.1,	8.45,	9.2,	9.64,	10.12,	10.45,	10.75,	11.22,	11.55,	11.92,	12.2,	12.32)
 b<-0.01
-b<-0.005
 
 #Quiz: fin 1 week6.
 n<-10
 b<-0.05
 spot_rates<-c(3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.55, 3.6, 3.65, 3.7)
-  
+
 #elementary prices with Ho-Lee model i.e. rates are variable.
 for(j in 0:n)#j - periods.
 {
@@ -190,6 +189,7 @@ for(j in 0:n)#j - periods.
       {
 #        el_price[j+1,j+1]<-(q*el_price[j,j])/(1+a[j])
 #        subst<-quote((q*el_price[j,j])/(1+x))#Ho-Lee
+#        bel_price[1,j+1]<-(q*bel_price[1,j])/(1+a[j]*exp(b*(j-1)))#BDT
         subst<-quote((q*el_price[j,j])/(1+x))#BDT - the same as Ho-Lee!
         body(f)[[2]]<-substitute(a+b, list(a=subst,b=body(f)[[2]],i=i,j=j))
         #bf[[2]]<-substitute(expression(a+b), list(a=1,b=bf[[2]]))
@@ -210,8 +210,8 @@ for(j in 0:n)#j - periods.
   message(paste("j=",j))
   if(j != 0)
   {
-#    root<-uniroot(f,lower = 0, upper = 1, tol = 1e-20)
-    root<-uniroot(f,lower = 0, upper = 1, tol = 1e-8)
+    root<-uniroot(f,lower = 0, upper = 1, tol = 1e-20)
+#    root<-uniroot(f,lower = 0, upper = 1, tol = 1e-8)
     a[j]<-root$root
   }
 
@@ -297,7 +297,7 @@ n<-9 # final payment at t=10
 c<-0.1165
 N<-2 # start of swaption
 
-#
+#Quiz: fin 1 week6.
 n<-9 # final payment at t=10
 c<-0.039
 N<-3 # start of swaption
