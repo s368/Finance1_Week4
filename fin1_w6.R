@@ -170,7 +170,7 @@ for(j in 0:n)#j - periods.
   {
     if(j==0)
     {
-#      el_price[j-i+1,j+1]<-S
+      el_price[j-i+1,j+1]<-S
       rate_lattice[j-i+1,j+1]<-spot_rates[j+1]/100.
     }
     else
