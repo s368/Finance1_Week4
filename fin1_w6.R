@@ -28,6 +28,7 @@ K<-80
 remove(rate_lattice)
 remove(zcb_price)
 remove(el_price)
+remove(bel_price)
 remove(short_rates)
 remove(all_zcb_prices)
 remove(call_option_euro_zcb_price)
@@ -47,6 +48,7 @@ remove(diff_optons)
 rate_lattice<-matrix(nrow=11,ncol=11)
 zcb_price<-matrix(nrow=11,ncol=11)
 el_price<-matrix(nrow=15,ncol=15)
+bel_price<-matrix(nrow=15,ncol=15)
 short_rates<-matrix(nrow=15,ncol=15)
 all_zcb_prices<-vector(length=11)
 call_option_euro_zcb_price<-matrix(nrow=11,ncol=11)
@@ -210,7 +212,7 @@ for(j in 0:n)#j - periods.
   {
     if(j != 0)
     {
-      short_rates[j-i+1,j]<-a[j]*exp(b*(j-i))#BDT
+      short_rates[i,j]<-a[j]*exp(b*(i-1))#BDT
     }
   }
   
@@ -240,6 +242,37 @@ for(j in 0:n)#j - periods.
       {
 #        el_price[1,j+1]<-(q*el_price[1,j])/(1+a[j]+b*(j-1))#Ho-Lee
         el_price[1,j+1]<-(q*el_price[1,j])/(1+a[j]*exp(b*(j-1)))#BDT
+      }
+    }
+  }#i
+
+  #el_price and bel_price are the same (but more accurate algo representation is bel_price!).
+  for(i in j:0)#i - set at the same period.
+  {
+    if(j==0)
+    {
+      bel_price[j-i+1,j+1]<-S
+      rate_lattice[j-i+1,j+1]<-spot_rates[j+1]/100.
+    }
+    else
+    {
+      #      short_rates[j-i+1,j+1]<-el_price[]
+      #3 variants: top[i=0]-center[0<i<j]-bottom[i=j]
+      if(0<i && i<j)
+      {
+        #        el_price[j-i+1,j+1]<-q*el_price[j-i,j]/(1+a[j]+b*(j-i)) + (1-q)*el_price[j-i+1,j]/(1+a[j]+b*(j-i-1))#Ho-Lee
+        bel_price[j-i+1,j+1]<-q*bel_price[j-i,j]/(1+a[j]*exp(b*(j-i))) + (1-q)*bel_price[j-i+1,j]/(1+a[j]*exp(b*(j-i-1)))#BDT
+      }
+      
+      if(i == j)#bottom
+      {
+        bel_price[j+1,j+1]<-(q*bel_price[j,j])/(1+a[j])#Ho-Lee and BDT (the same!).
+      }
+      
+      if(i == 0)#top
+      {
+        #        el_price[1,j+1]<-(q*el_price[1,j])/(1+a[j]+b*(j-1))#Ho-Lee
+        bel_price[1,j+1]<-(q*bel_price[1,j])/(1+a[j]*exp(b*(j-1)))#BDT
       }
     }
   }#i
