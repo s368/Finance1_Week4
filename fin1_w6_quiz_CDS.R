@@ -47,6 +47,8 @@ for(j in n:0)#j - periods.
 }
 
 #question 4.
+d1<-1/(1+0.05/2)
+d2<-1/(1+0.05/2)^2
 f<-function(x) {d1*(5*(1-x)+10*x)+d2*(105*(1-x)^2+10*(1-x)*x)-100.923497917906}
 rrr<-uniroot(f,lower = 0, upper = 1)
 round(rrr$root,4)*100 # the answer = 2.12
