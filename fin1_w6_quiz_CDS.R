@@ -55,6 +55,7 @@ rrr<-uniroot(f,lower = 0, upper = 1, tol = 10e-10)
 round(rrr$root,4)*100 # the answer = 2.12
 
 # question 5 (CDS pricing).
+# "CDS pricing" tab in "Bonds_and_cds_v2.xlsx".
 n<-8
 r<-0.01
 S<-218.88953946553/4
@@ -125,3 +126,71 @@ for(i in 1:n)
 
 spread<-sum_protection/sum_premium
 diff<-sum_protection - sum_premium
+
+# question 5 (CDS pricing).
+n<-20
+r<-0.05
+S<-1/4
+nominal<-10000000
+R<-0.25
+
+remove(discount)
+remove(hazard_rate)
+remove(survival)
+remove(exp_premium)
+remove(pv_premium)
+remove(default)
+remove(ai)
+remove(pv_ai)
+remove(exp_protection)
+remove(pv_protection)
+
+discount<-vector(length = 21)
+hazard_rate<-vector(length = 21)
+survival<-vector(length = 21)
+exp_premium<-vector(length = 21)
+pv_premium<-vector(length = 21)
+default<-vector(length = 21)
+ai<-vector(length = 21)
+pv_ai<-vector(length = 21)
+exp_protection<-vector(length = 21)
+pv_protection<-vector(length = 21)
+
+for(i in 0:n)
+{
+  if(i == 0)
+  {
+    discount[i+1]<-1.
+    hazard_rate[i+1]<-0.01
+    survival[i+1]<-100.
+  }
+  else
+  {
+    discount[i+1]<-1/(1+r/4)^i
+
+    hazard_rate[i+1]<-0.01 # constant!
+
+    survival[i+1]<-survival[i]*(1-hazard_rate[i])
+    
+    exp_premium[i+1]<-S*survival[i+1]/100.
+    pv_premium[i+1]<-exp_premium[i+1]*discount[i+1]*nominal*0.0001
+    
+    default[i+1]<-survival[i]*hazard_rate[i]
+    ai[i+1]<-S/2*default[i+1]/100.
+    pv_ai[i+1]<-ai[i+1]*discount[i+1]*nominal*0.0001
+    
+    exp_protection[i+1]<-(1-R)*default[i+1]/100.
+    pv_protection[i+1]<-exp_protection[i+1]*discount[i+1]*nominal
+  }
+}
+
+sum_protection<-0
+sum_premium<-0
+
+for(i in 1:n)
+{
+  sum_protection<-sum_protection + pv_protection[i+1]
+  sum_premium<-sum_premium + pv_premium[i+1] + pv_ai[i+1]
+}
+
+spread<-sum_protection/sum_premium # the answer (question 5).
