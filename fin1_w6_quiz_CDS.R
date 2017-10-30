@@ -94,6 +94,11 @@ for(i in 0:n)
   {
     discount[i+1]<-1/(1+r/4)^i
     hazard_rate[i+1]<-0.020140573040198/2.
+    
+    if(0<=3*i && 3*i<12) hazard_rate[i+1]<-0.020140573040198/2. # first year
+    if(12<=3*i && 3*i<24) hazard_rate[i+1]<-0.019443103338663/2. # second year
+    if(24<=3*i && 3*i<36) hazard_rate[i+1]<-0.0199765188714693/2. # third year
+    
     survival[i+1]<-survival[i]*(1-hazard_rate[i])
     
     exp_premium[i+1]<-S*survival[i+1]/100.
@@ -107,3 +112,15 @@ for(i in 0:n)
     pv_protection[i+1]<-exp_protection[i+1]*discount[i+1]*nominal
   }
 }
+
+sum_protection<-0
+sum_premium<-0
+
+for(i in 1:n)
+{
+  sum_protection<-sum_protection + pv_protection[i+1]
+  sum_premium<-sum_premium + pv_premium[i+1] + pv_ai[i+1]
+}
+
+spread<-sum_protection/sum_premium
+diff<-sum_protection - sum_premium
