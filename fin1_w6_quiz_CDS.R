@@ -47,16 +47,17 @@ for(j in n:0)#j - periods.
 }
 
 #question 4.
+#first year
 d1<-1/(1+0.05/2)
 d2<-1/(1+0.05/2)^2
 f<-function(x) {d1*(5*(1-x)+10*x)+d2*(105*(1-x)^2+10*(1-x)*x)-100.923497917906}
-rrr<-uniroot(f,lower = 0, upper = 1)
+rrr<-uniroot(f,lower = 0, upper = 1, tol = 10e-10)
 round(rrr$root,4)*100 # the answer = 2.12
 
 # question 5 (CDS pricing).
 n<-8
 r<-0.01
-S<-218.89/4
+S<-218.88953946553/4
 nominal<-1000000
 R<-0.45
 
