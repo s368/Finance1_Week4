@@ -9,6 +9,11 @@ round(B,2) # answer on question 1.
 
 #question 2.
 n<-20*12
+c<-0.06/12
+r<-0.05/12
+M<-400000000
+
+ans<-c*(1+c)^n*M/((1+c)^n-1) * ((1+r)^n-1)/r/(1+r)^n
 
 # for(i in 1:n)
 # {
