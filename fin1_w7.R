@@ -10,7 +10,25 @@ round(B,2) # answer on question 1.
 #question 2.
 n<-20*12
 
-for(i in 1:n)
-{
-  
-}
+# for(i in 1:n)
+# {
+#   
+# }
+
+#book page 47: example 3.2 (Loan Calculation).
+n<-12*5 # 5 years
+r<-0.12/12
+p<-1000
+a<-r*(1+r)^n*p/((1+r)^n-1)
+round(a,2) # answer on question 1.
+
+#book page 404: example 14.9 (Quick, buy this CMO).
+n<-12*30 # 30 years -> in months
+r<-0.12/12 # year rate -> in month compounding
+p<-100
+a<-r*(1+r)^n*p/((1+r)^n-1)
+round(a,2) # answer on question 1.
+
+
+
+
