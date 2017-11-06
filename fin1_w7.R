@@ -14,6 +14,7 @@ r<-0.05/12
 M<-400000000
 season<-0
 R<-0.045/12
+R2<-0.035/12
 
 #Excel
 # n<-30*12
@@ -25,8 +26,8 @@ R<-0.045/12
 ans<-c*(1+c)^n*M/((1+c)^n-1) * ((1+r)^n-1)/r/(1+r)^n
 
 #psa 100% for "prepaiment rate".
-psa_beg<-0.002 #*2
-psa_end<-0.06  #*2
+psa_beg<-0.002*1.5 #*2
+psa_end<-0.06*1.5  #*2
 
 cpr<-vector(length = n)
 smm<-vector(length = n)
@@ -40,6 +41,7 @@ principal_pre<-vector(length = n)
 principal_tot<-vector(length = n)
 pv_principal_tot<-vector(length = n)
 pv_interest_in<-vector(length = n)
+pv_interest_in_R2<-vector(length = n)
 duration_interest_in<-vector(length = n)
 
 for(i in 1:n)
@@ -82,6 +84,7 @@ for(i in 1:n)
 
   pv_principal_tot[i]<-principal_tot[i]/(1+R)^i
   pv_interest_in[i]<-interest_in[i]/(1+R)^i
+  pv_interest_in_R2[i]<-interest_in[i]/(1+R2)^i
   
   duration_interest_in[i]<-i*interest_in[i]/(1+R)^i
     
@@ -99,6 +102,11 @@ answer_6<-round(sum(pv_interest_in,na.rm = TRUE)/1000000,2)
 
 #answer question 7 = 5.18
 answer_7<-round(sum(duration_interest_in,na.rm = TRUE)/sum(pv_interest_in,na.rm = TRUE)/12,2)
+
+#answer question 8 = 8.61 (new > old).
+round(sum(pv_interest_in_R2 - pv_interest_in)/1000000,2)
+
+#answer question 9 = 11.49 (old > new).
 
 #book page 47: example 3.2 (Loan Calculation).
 n<-12*5 # 5 years
