@@ -40,6 +40,7 @@ principal_pre<-vector(length = n)
 principal_tot<-vector(length = n)
 pv_principal_tot<-vector(length = n)
 pv_interest_in<-vector(length = n)
+duration_interest_in<-vector(length = n)
 
 for(i in 1:n)
 {
@@ -81,6 +82,8 @@ for(i in 1:n)
 
   pv_principal_tot[i]<-principal_tot[i]/(1+R)^i
   pv_interest_in[i]<-interest_in[i]/(1+R)^i
+  
+  duration_interest_in[i]<-i*interest_in[i]/(1+R)^i
     
   amt_end[i]<-amt_beg[i] - principal_pay[i] - principal_pre[i]
 }
@@ -93,6 +96,9 @@ answer_5<-round(sum(pv_principal_tot,na.rm = TRUE)/1000000,2)
 
 #answer question 6 = 159.87
 answer_6<-round(sum(pv_interest_in,na.rm = TRUE)/1000000,2)
+
+#answer question 7 = 5.18
+answer_7<-round(sum(duration_interest_in,na.rm = TRUE)/sum(pv_interest_in,na.rm = TRUE)/12,2)
 
 #book page 47: example 3.2 (Loan Calculation).
 n<-12*5 # 5 years
