@@ -12,13 +12,70 @@ n<-20*12
 c<-0.06/12
 r<-0.05/12
 M<-400000000
+season<-0
+
+#Excel
+n<-30*12
+c<-0.08125/12
+r<-0.075/12
+M<-400
+season<-3
 
 ans<-c*(1+c)^n*M/((1+c)^n-1) * ((1+r)^n-1)/r/(1+r)^n
 
-# for(i in 1:n)
-# {
-#   
-# }
+#psa 100% for "prepaiment rate".
+psa_beg<-0.002
+psa_end<-0.06
+
+cpr<-vector(length = n)
+smm<-vector(length = n)
+amt_beg<-vector(length = n)
+amt_end<-vector(length = n)
+pay_month<-vector(length = n)
+interest_in<-vector(length = n)
+interest_out<-vector(length = n)
+principal_pay<-vector(length = n)
+principal_pre<-vector(length = n)
+
+for(i in 1:n)
+{
+  if(i <= 30)
+  {
+    cpr[i]<-psa_beg+(psa_end-psa_beg)*(i+season-1)/(30-1)
+  }
+  else
+  {
+    cpr[i]<-0.06
+  }
+  
+  smm[i]<-1-(1-cpr[i])^(1/12)
+  
+  if(i == 1)
+  {
+    amt_beg[i]<-M
+  }
+  else
+  {
+    amt_beg[i]<-amt_end[i-1]
+  }
+  
+  if(i==1)
+  {
+    pay_month[i]<-c*M*(1+c)^(n-season)/((1+c)^(n-season)-1)
+  }
+  else
+  {
+    pay_month[i]<-c*amt_end[i-1]*(1+c)^(n-season-i+1)/((1+c)^(n-season-i+1)-1)
+  }
+  
+  interest_in[i]<-amt_beg[i]*c
+  interest_out[i]<-amt_beg[i]*r
+  
+  principal_pay[i]<-pay_month[i] - interest_in[i]
+  principal_pre[i]<-(amt_beg[i]-principal_pay[i])*smm[i]
+  
+  amt_end[i]<-amt_beg[i] - principal_pay[i] - principal_pre[i]
+}
 
 #book page 47: example 3.2 (Loan Calculation).
 n<-12*5 # 5 years
