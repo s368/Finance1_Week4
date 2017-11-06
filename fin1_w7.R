@@ -13,6 +13,7 @@ c<-0.06/12
 r<-0.05/12
 M<-400000000
 season<-0
+R<-0.045/12
 
 #Excel
 # n<-30*12
@@ -36,6 +37,9 @@ interest_in<-vector(length = n)
 interest_out<-vector(length = n)
 principal_pay<-vector(length = n)
 principal_pre<-vector(length = n)
+principal_tot<-vector(length = n)
+pv_principal_tot<-vector(length = n)
+pv_interest_in<-vector(length = n)
 
 for(i in 1:n)
 {
@@ -73,15 +77,22 @@ for(i in 1:n)
   
   principal_pay[i]<-pay_month[i] - interest_in[i]
   principal_pre[i]<-(amt_beg[i]-principal_pay[i])*smm[i]
-  
+  principal_tot[i]<-principal_pay[i] + principal_pre[i]
+
+  pv_principal_tot[i]<-principal_tot[i]/(1+R)^i
+  pv_interest_in[i]<-interest_in[i]/(1+R)^i
+    
   amt_end[i]<-amt_beg[i] - principal_pay[i] - principal_pre[i]
 }
 
 #answer question 2 = 171.18
 answer_2<-round(sum(interest_out, na.rm = TRUE)/1000000,2)
 
-#answer question 3 = 181.09
-answer_3<-round(sum(principal_pre,na.rm = TRUE)/1000000,2)
+#answer question 5 = 280.10
+answer_5<-round(sum(pv_principal_tot,na.rm = TRUE)/1000000,2)
+
+#answer question 6 = 159.87
+answer_6<-round(sum(pv_interest_in,na.rm = TRUE)/1000000,2)
 
 #book page 47: example 3.2 (Loan Calculation).
 n<-12*5 # 5 years
