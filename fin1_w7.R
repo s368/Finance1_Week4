@@ -77,6 +77,12 @@ for(i in 1:n)
   amt_end[i]<-amt_beg[i] - principal_pay[i] - principal_pre[i]
 }
 
+#answer question 2 = 171.18
+answer_2<-round(sum(interest_out, na.rm = TRUE)/1000000,2)
+
+#answer question 3 = 181.09
+answer_3<-round(sum(principal_pre,na.rm = TRUE)/1000000,2)
+
 #book page 47: example 3.2 (Loan Calculation).
 n<-12*5 # 5 years
 r<-0.12/12
