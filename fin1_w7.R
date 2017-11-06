@@ -24,8 +24,8 @@ season<-0
 ans<-c*(1+c)^n*M/((1+c)^n-1) * ((1+r)^n-1)/r/(1+r)^n
 
 #psa 100% for "prepaiment rate".
-psa_beg<-0.002
-psa_end<-0.06
+psa_beg<-0.002 #*2
+psa_end<-0.06  #*2
 
 cpr<-vector(length = n)
 smm<-vector(length = n)
@@ -45,7 +45,7 @@ for(i in 1:n)
   }
   else
   {
-    cpr[i]<-0.06
+    cpr[i]<-psa_end
   }
   
   smm[i]<-1-(1-cpr[i])^(1/12)
