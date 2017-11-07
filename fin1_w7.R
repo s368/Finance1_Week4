@@ -117,7 +117,68 @@ answer_7<-round(sum(avg_life_interest_out,na.rm = TRUE)/sum(pv_interest_out,na.r
 #OK-answer question 8 = 8.61 (new > old).
 answer_8<-round(sum(pv_interest_out_R2 - pv_interest_out)/1000000,2)
 
-#answer question 9 = 11.49 (old > new).
+#prepare(!) answer question 9 = 11.49 (old > new).
+pv_interest_out_old<-pv_interest_out
+
+#for question 9!
+#psa 100% for "prepaiment rate".
+psa_beg<-0.002 *1.5 #*2
+psa_end<-0.06  *1.5  #*2
+
+for(i in 1:n)
+{
+  if(i <= 30)
+  {
+    cpr[i]<-psa_beg+(psa_end-psa_beg)*(i+season-1)/(30-1)
+  }
+  else
+  {
+    cpr[i]<-psa_end
+  }
+  
+  smm[i]<-1-(1-cpr[i])^(1/12)
+  
+  if(i == 1)
+  {
+    amt_beg[i]<-M
+  }
+  else
+  {
+    amt_beg[i]<-amt_end[i-1]
+  }
+  
+  if(i==1)
+  {
+    pay_month[i]<-c*M*(1+c)^(n-season)/((1+c)^(n-season)-1)
+  }
+  else
+  {
+    pay_month[i]<-c*amt_end[i-1]*(1+c)^(n-season-i+1)/((1+c)^(n-season-i+1)-1)
+  }
+  
+  interest_in[i]<-amt_beg[i]*c
+  interest_out[i]<-amt_beg[i]*r
+  
+  principal_pay[i]<-pay_month[i] - interest_in[i]
+  principal_pre[i]<-(amt_beg[i]-principal_pay[i])*smm[i]
+  principal_tot[i]<-principal_pay[i] + principal_pre[i]
+  
+  pv_principal_tot[i]<-principal_tot[i]/(1+R)^i
+  pv_interest_in[i]<-interest_in[i]/(1+R)^i
+  pv_interest_in_R2[i]<-interest_in[i]/(1+R2)^i
+  
+  pv_interest_out[i]<-interest_out[i]/(1+R)^i
+  pv_interest_out_R2[i]<-interest_out[i]/(1+R2)^i
+  
+  duration_interest_in[i]<-i*interest_in[i]/(1+R)^i
+  duration_interest_out[i]<-i*interest_out[i]/(1+R)^i
+  avg_life_interest_out[i]<-i*interest_out[i]
+  
+  amt_end[i]<-amt_beg[i] - principal_pay[i] - principal_pre[i]
+}
+
+#answer question 9 = -9.58 (old > new) i.e. negative (obligatory with "-" sign!) answer.
+answer_9<-round(sum(pv_interest_out_R2 - pv_interest_out_old)/1000000,2)
 
 #book page 47: example 3.2 (Loan Calculation).
 n<-12*5 # 5 years
