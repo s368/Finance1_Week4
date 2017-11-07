@@ -5,7 +5,8 @@ c<-0.05/12 # i.e. monthly rate.
 M<-400000
 
 B<-c*(1+c)^n*M/((1+c)^n-1)
-round(B,2) # answer on question 1.
+#OK-answer question 1 = 2147.29
+answer_1<-round(B,2) # answer on question 1.
 
 #question 2.
 n<-20*12
@@ -26,8 +27,8 @@ R2<-0.035/12
 ans<-c*(1+c)^n*M/((1+c)^n-1) * ((1+r)^n-1)/r/(1+r)^n
 
 #psa 100% for "prepaiment rate".
-psa_beg<-0.002*1.5 #*2
-psa_end<-0.06*1.5  #*2
+psa_beg<-0.002 #*1.5 #*2
+psa_end<-0.06 #*1.5  #*2
 
 cpr<-vector(length = n)
 smm<-vector(length = n)
@@ -41,8 +42,12 @@ principal_pre<-vector(length = n)
 principal_tot<-vector(length = n)
 pv_principal_tot<-vector(length = n)
 pv_interest_in<-vector(length = n)
+pv_interest_out<-vector(length = n)
 pv_interest_in_R2<-vector(length = n)
 duration_interest_in<-vector(length = n)
+duration_interest_out<-vector(length = n)
+pv_interest_out_R2<-vector(length = n)
+avg_life_interest_out<-vector(length = n)
 
 for(i in 1:n)
 {
@@ -85,26 +90,32 @@ for(i in 1:n)
   pv_principal_tot[i]<-principal_tot[i]/(1+R)^i
   pv_interest_in[i]<-interest_in[i]/(1+R)^i
   pv_interest_in_R2[i]<-interest_in[i]/(1+R2)^i
+
+  pv_interest_out[i]<-interest_out[i]/(1+R)^i
+  pv_interest_out_R2[i]<-interest_out[i]/(1+R2)^i
   
   duration_interest_in[i]<-i*interest_in[i]/(1+R)^i
-    
+  duration_interest_out[i]<-i*interest_out[i]/(1+R)^i
+  avg_life_interest_out[i]<-i*interest_out[i]
+  
   amt_end[i]<-amt_beg[i] - principal_pay[i] - principal_pre[i]
 }
 
-#answer question 2 = 171.18
+#OK-answer question 2 = 171.18
 answer_2<-round(sum(interest_out, na.rm = TRUE)/1000000,2)
 
-#answer question 5 = 280.10
+#OK-answer question 5 = 280.10
 answer_5<-round(sum(pv_principal_tot,na.rm = TRUE)/1000000,2)
 
-#answer question 6 = 159.87
-answer_6<-round(sum(pv_interest_in,na.rm = TRUE)/1000000,2)
+#OK-answer question 6 = 133.23
+answer_6<-round(sum(pv_interest_out,na.rm = TRUE)/1000000,2)
 
-#answer question 7 = 5.18
-answer_7<-round(sum(duration_interest_in,na.rm = TRUE)/sum(pv_interest_in,na.rm = TRUE)/12,2)
+#?answer question 7 = 5.18
+#answer_7<-round(sum(duration_interest_out,na.rm = TRUE)/sum(pv_interest_out,na.rm = TRUE)/12,2)
+answer_7<-round(sum(avg_life_interest_out,na.rm = TRUE)/sum(pv_interest_out,na.rm = TRUE)/12,2)
 
-#answer question 8 = 8.61 (new > old).
-round(sum(pv_interest_in_R2 - pv_interest_in)/1000000,2)
+#OK-answer question 8 = 8.61 (new > old).
+answer_8<-round(sum(pv_interest_out_R2 - pv_interest_out)/1000000,2)
 
 #answer question 9 = 11.49 (old > new).
 
