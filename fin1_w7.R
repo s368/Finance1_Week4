@@ -47,7 +47,10 @@ pv_interest_in_R2<-vector(length = n)
 duration_interest_in<-vector(length = n)
 duration_interest_out<-vector(length = n)
 pv_interest_out_R2<-vector(length = n)
+
 avg_life_interest_out<-vector(length = n)
+avg_life_interest_in<-vector(length = n)
+avg_life_principal<-vector(length = n)
 
 for(i in 1:n)
 {
@@ -96,7 +99,10 @@ for(i in 1:n)
   
   duration_interest_in[i]<-i*interest_in[i]/(1+R)^i
   duration_interest_out[i]<-i*interest_out[i]/(1+R)^i
+
   avg_life_interest_out[i]<-i*interest_out[i]
+  avg_life_interest_in[i]<-i*interest_in[i]
+  avg_life_principal[i]<-i*principal_tot[i]
   
   amt_end[i]<-amt_beg[i] - principal_pay[i] - principal_pre[i]
 }
@@ -110,9 +116,16 @@ answer_5<-round(sum(pv_principal_tot,na.rm = TRUE)/1000000,2)
 #OK-answer question 6 = 133.23
 answer_6<-round(sum(pv_interest_out,na.rm = TRUE)/1000000,2)
 
-#?answer question 7 = 5.18
+#OK-answer question 7 = 6.01
 #answer_7<-round(sum(duration_interest_out,na.rm = TRUE)/sum(pv_interest_out,na.rm = TRUE)/12,2)
-answer_7<-round(sum(avg_life_interest_out,na.rm = TRUE)/sum(pv_interest_out,na.rm = TRUE)/12,2)
+# answer_7<-round(sum(avg_life_interest_out,na.rm = TRUE)/sum(pv_interest_out,na.rm = TRUE)/12,2)
+# answer_7princ<-round(sum(avg_life_principal,na.rm = TRUE)/sum(principal_tot,na.rm = TRUE)/12,2)
+# answer_7int<-round(sum(avg_life_interest_out,na.rm = TRUE)/sum(principal_tot,na.rm = TRUE)/12,2)
+
+#OK-answer question 7 = 6.01 : actually the both (answer_7int_out and answer_7int_in) are the same.
+answer_7int_out<-round(sum(avg_life_interest_out,na.rm = TRUE)/sum(interest_out,na.rm = TRUE)/12,2)
+answer_7int_in<-round(sum(avg_life_interest_in,na.rm = TRUE)/sum(interest_in,na.rm = TRUE)/12,2)
+answer_7<-answer_7int_in
 
 #OK-answer question 8 = 8.61 (new > old).
 answer_8<-round(sum(pv_interest_out_R2 - pv_interest_out)/1000000,2)
